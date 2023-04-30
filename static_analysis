@@ -1,0 +1,24 @@
+Model=ExtAPI.DataModel.Project.Model
+Geometry = Model.Geometry
+Material = Model.Materials
+CS = Model.CoordinateSystems
+Mesh = Model.Mesh
+Analysis = Model.Analyses[0]
+Static_Sol = Analysis.Solution
+
+M1= Mesh.AddSizing()
+M1.Location = ExtAPI.DataModel.GetObjectsByName('Body')[0]
+M1.ElementSize = Quantity(4,'mm')
+
+BC= Analysis.AddFixedSupport()
+BC.Location = ExtAPI.DataModel.GetObjectsByName('Fixed')[0]
+
+Load = Analysis.AddForce()
+Load.Location = ExtAPI.DataModel.GetObjectsByName('Load')[0]
+Load.DefineBy= LoadDefineBy.Components
+Load.ZComponent.Output.SetDiscreteValue(0,Quantity(-50,'N'))
+
+Us = Static_Sol.AddTotalDeformation()
+Eqv = Static_Sol.AddEquivalentStress()
+
+Static_Sol.Solve(True)
